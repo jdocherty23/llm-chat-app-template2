@@ -44,17 +44,22 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
       messages.unshift({ role: "system", content: SYSTEM_PROMPT });
     }
 
-    // Call AI with streaming enabled
-    const aiResponse = await env.AI.run(
+    // Run the AI in streaming mode
+    const aiResult = await env.AI.run(
       MODEL_ID,
       { messages, max_tokens: 1024 },
-      { stream: true } // streaming mode
-    ) as ReadableStream<Uint8Array>;
+      { stream: true }
+    );
 
-    // Return streaming response directly
-    return new Response(aiResponse, {
+    // Ensure we return the AI response body as a stream
+    if (!("body" in aiResult) || !aiResult.body) {
+      throw new Error("AI returned no body stream");
+    }
+
+    return new Response(aiResult.body, {
       headers: { "Content-Type": "text/plain; charset=utf-8" },
     });
+
   } catch (error) {
     console.error("Error processing chat request:", error);
     return new Response(
