@@ -105,22 +105,13 @@ async function sendMessage() {
 			// Decode chunk
 			const chunk = decoder.decode(value, { stream: true });
 
-			// Process SSE format
-			const lines = chunk.split("\n");
-			for (const line of lines) {
-				try {
-					const jsonData = JSON.parse(line);
-					if (jsonData.response) {
-						// Append new content to existing text
-						responseText += jsonData.response;
-						assistantMessageEl.querySelector("p").textContent = responseText;
+			// Process raw text chunks (Workers AI streams plain text)
+			responseText += chunk;
+			assistantMessageEl.querySelector("p").textContent = responseText;
+			
+			// Autoscroll
+			chatMessages.scrollTop = chatMessages.scrollHeight;
 
-						// Scroll to bottom
-						chatMessages.scrollTop = chatMessages.scrollHeight;
-					}
-				} catch (e) {
-					console.error("Error parsing JSON:", e);
-				}
 			}
 		}
 
