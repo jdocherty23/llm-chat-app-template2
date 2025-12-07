@@ -102,26 +102,27 @@ async function sendMessage() {
 				break;
 			}
 
-			// Decode chunk
+			// Decode chunk (Workers AI streams raw text)
 			const chunk = decoder.decode(value, { stream: true });
 
-			// Process raw text chunks (Workers AI streams plain text)
+			// Append chunk to response text
 			responseText += chunk;
-			assistantMessageEl.querySelector("p").textContent = responseText;
-			
-			// Autoscroll
-			chatMessages.scrollTop = chatMessages.scrollHeight;
 
-			}
+			// Update assistant message
+			assistantMessageEl.querySelector("p").textContent = responseText;
+
+			// Auto-scroll
+			chatMessages.scrollTop = chatMessages.scrollHeight;
 		}
 
 		// Add completed response to chat history
 		chatHistory.push({ role: "assistant", content: responseText });
+
 	} catch (error) {
 		console.error("Error:", error);
 		addMessageToChat(
 			"assistant",
-			"Sorry, there was an error processing your request.",
+			"Sorry, there was an error processing your request."
 		);
 	} finally {
 		// Hide typing indicator
@@ -131,6 +132,8 @@ async function sendMessage() {
 		isProcessing = false;
 		userInput.disabled = false;
 		sendButton.disabled = false;
+
+		// Focus input
 		userInput.focus();
 	}
 }
