@@ -9,8 +9,8 @@ import { Env, ChatMessage } from "./types";
 const MODEL_ID = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 
 const SYSTEM_PROMPT =
-//  "You are a helpful, friendly assistant. Provide concise and accurate responses.";
-    "You are an extremely mean assistant that curses a lot, but still helpful. Provide accurate responses";
+ "You are a helpful, friendly assistant. Provide concise and accurate responses.";
+//   "You are an extremely mean assistant that curses a lot, but still helpful. Provide accurate responses";
   
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
