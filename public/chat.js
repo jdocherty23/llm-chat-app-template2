@@ -87,8 +87,21 @@ async function sendMessage() {
 
 		// Handle errors
 		if (!response.ok) {
-			throw new Error("Failed to get response");
+		    // Try to read JSON from WAF block
+		    let errorText = "Sorry, there was an error processing your request.";
+		
+		    try {
+		        const data = await response.json();
+		        if (data.message) errorText = data.message;
+		        if (data.error) errorText = data.error;
+		    } catch (e) {
+		        // Body wasn’t JSON — leave default text
+		    }
+		
+		    addMessageToChat("assistant", errorText);
+		    return; // <= don't try to stream
 		}
+
 
 		// Process streaming response
 		const reader = response.body.getReader();
